@@ -3,6 +3,8 @@ using Microsoft.ML.Data;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -13,24 +15,41 @@ namespace BertModelLibrary
     {
         private InferenceSession session;
         static Semaphore sessionSemaphore = new Semaphore(1, 1);
-        public BertModel()
-        {
-            string modelPath = "..\\..\\..\\bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
-            string downaloadedModelPath = modelPath;
+        static public Queue<string> progressBar = new Queue<string>();
 
-            if (!File.Exists(modelPath))
-            {
-                var downloadTask = DownloadModel(modelPath);
-                downaloadedModelPath = downloadTask.Result;
-            }
-            session = new InferenceSession(downaloadedModelPath);
+        public BertModel(InferenceSession inferenceSession)
+        {
+            this.session = inferenceSession;
         }
 
-        public static async Task<string> DownloadModel(string modelPath)
+        public static async Task<BertModel> Create(string modelWebSource)
         {
             try
             {
-                string modelWebSource = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
+                String path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+                var modelPath = Path.Combine(path, "bert-large-uncased-whole-word-masking-finetuned-squad.onnx");
+
+                string downaloadedModelPath = modelPath;
+
+                if (!File.Exists(modelPath))
+                {
+                    downaloadedModelPath = await DownloadModel(modelPath, modelWebSource);
+                }
+                return new BertModel(new InferenceSession(downaloadedModelPath));
+            }
+            catch
+            {
+                throw;
+            }
+
+
+        }
+        public static async Task<string> DownloadModel(string modelPath, string modelWebSource)
+        {
+            try
+            {
+
                 var httpClient = new HttpClient();
                 int retriesRemain = 5;
                 bool isDownloaded = false;
@@ -40,13 +59,23 @@ namespace BertModelLibrary
                     {
                         using var stream = await httpClient.GetStreamAsync(modelWebSource);
                         using var fileStream = new FileStream(modelPath, FileMode.CreateNew);
+                        lock (progressBar)
+                        {
+                            progressBar.Enqueue("Downloading model...");
+                        }
                         await stream.CopyToAsync(fileStream);
                         isDownloaded = true;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         retriesRemain--;
+                        lock (progressBar)
+                        {
+                            progressBar.Enqueue($"Remains {retriesRemain} attempts to download model!");
+                        }
+                        await Task.Delay(1000);
                     }
+
                 }
                 if (!File.Exists(modelPath))
                 {
@@ -70,14 +99,12 @@ namespace BertModelLibrary
                     token.ThrowIfCancellationRequested();
 
                 var sentence = $"{{\"question\": {question}, \"context\": \"@CTX\"}}".Replace("@CTX", text);
-                //Console.WriteLine(sentence);
 
                 // Create Tokenizer and tokenize the sentence.
                 var tokenizer = new BertUncasedLargeTokenizer();
 
                 // Get the sentence tokens.
                 var tokens = tokenizer.Tokenize(sentence);
-                // Console.WriteLine(String.Join(", ", tokens));
 
                 // Encode the sentence and pass in the count of the tokens in the sentence.
                 var encoded = tokenizer.Encode(tokens.Count(), sentence);
@@ -91,7 +118,6 @@ namespace BertModelLibrary
                 };
 
                 // Create input tensor.
-
                 var input_ids = ConvertToTensor(bertInput.InputIds, bertInput.InputIds.Length);
                 var attention_mask = ConvertToTensor(bertInput.AttentionMask, bertInput.InputIds.Length);
                 var token_type_ids = ConvertToTensor(bertInput.TypeIds, bertInput.InputIds.Length);
@@ -129,7 +155,7 @@ namespace BertModelLibrary
 
                 // Print the result.
 
-                await Task.Delay(3000);
+                await Task.Delay(2000);
 
                 if (token.IsCancellationRequested)
                     token.ThrowIfCancellationRequested();
