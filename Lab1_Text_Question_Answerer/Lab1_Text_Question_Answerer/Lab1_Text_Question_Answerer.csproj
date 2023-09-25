@@ -7,10 +7,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-
-
   <ItemGroup>
-    <PackageReference Include="BertModelLibrary" Version="1.0.0" />
+    <ProjectReference Include="..\BertModelLibrary\BertModelLibrary.csproj" />
   </ItemGroup>
+
+
+
+  
 	
 </Project>

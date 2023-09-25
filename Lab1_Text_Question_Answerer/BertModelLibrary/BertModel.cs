@@ -93,9 +93,6 @@ namespace BertModelLibrary
         {
             try
             {
-                sessionSemaphore.WaitOne();
-                if (token.IsCancellationRequested)
-                    token.ThrowIfCancellationRequested();
                 var allComputations = await Task.Factory.StartNew<string>(_ =>
                 {
                     try
@@ -133,8 +130,11 @@ namespace BertModelLibrary
                                                     NamedOnnxValue.CreateFromTensor("input_mask", attention_mask),
                                                     NamedOnnxValue.CreateFromTensor("segment_ids", token_type_ids) };
 
-                        // Run session and send the input data in to get inference output. 
-                        var output = Task.Run(() => session.Run(input)).Result;
+                        // Run session and send the input data in to get inference output.
+
+                        sessionSemaphore.WaitOne();
+                        var output = session.Run(input);
+                        sessionSemaphore.Release();
 
                         if (token.IsCancellationRequested)
                             token.ThrowIfCancellationRequested();
@@ -176,7 +176,7 @@ namespace BertModelLibrary
 
                 }, token, TaskCreationOptions.LongRunning);
 
-                sessionSemaphore.Release();
+                
                 return allComputations;
             }
             catch (Exception)
