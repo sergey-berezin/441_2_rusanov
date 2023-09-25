@@ -7,8 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+
+
   <ItemGroup>
     <ProjectReference Include="..\BertModelLibrary\BertModelLibrary.csproj" />
   </ItemGroup>
-
+	
 </Project>

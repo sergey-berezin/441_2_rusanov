@@ -27,7 +27,7 @@ namespace Lab1_Text_Question_Answerer
                     CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
                     CancellationToken token = cancelTokenSource.Token;
  
-                    var createTask = Task.Run(() => BertModel.Create(modelWebSource));
+                    var createTask = BertModel.Create(modelWebSource);
                     while (true && !createTask.IsCompleted)
                     {
                         lock (BertModel.progressBar)
@@ -44,7 +44,7 @@ namespace Lab1_Text_Question_Answerer
                     {
                         consoleSemaphore.Release();
                         if (question == "cancel") { cancelTokenSource.Cancel(); }
-                        var answer = Task.Run(() => ProcessQuestionAsync(bertModel, text, question, token));
+                        var answer = ProcessQuestionAsync(bertModel, text, question, token);
                         consoleSemaphore.WaitOne();
                     }
                 }
