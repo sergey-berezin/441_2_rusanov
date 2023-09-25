@@ -10,7 +10,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\BertModelLibrary\BertModelLibrary.csproj" />
+    <PackageReference Include="BertModelLibrary" Version="1.0.0" />
   </ItemGroup>
 	
 </Project>
