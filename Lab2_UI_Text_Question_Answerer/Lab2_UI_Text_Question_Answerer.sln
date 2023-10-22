@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab2_UI_Text_Question_Answerer", "Lab2_UI_Text_Question_Answerer\Lab2_UI_Text_Question_Answerer.csproj", "{83F9C0C5-2338-4AEC-B3C6-26E35D896A43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BertModelLibrary", "BertModelLibrary\BertModelLibrary.csproj", "{B0C9C7CE-502E-4B92-AB17-73F7F98CD57D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BertViewModel", "BertViewModel\BertViewModel.csproj", "{F561A3E0-B148-44AF-A842-B42815F8A2BE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83F9C0C5-2338-4AEC-B3C6-26E35D896A43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83F9C0C5-2338-4AEC-B3C6-26E35D896A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83F9C0C5-2338-4AEC-B3C6-26E35D896A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83F9C0C5-2338-4AEC-B3C6-26E35D896A43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0C9C7CE-502E-4B92-AB17-73F7F98CD57D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0C9C7CE-502E-4B92-AB17-73F7F98CD57D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0C9C7CE-502E-4B92-AB17-73F7F98CD57D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F561A3E0-B148-44AF-A842-B42815F8A2BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F561A3E0-B148-44AF-A842-B42815F8A2BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F561A3E0-B148-44AF-A842-B42815F8A2BE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2FE9EFA6-CF7A-4DDE-AD8F-A42F4C4298E4}
+	EndGlobalSection
+EndGlobal
