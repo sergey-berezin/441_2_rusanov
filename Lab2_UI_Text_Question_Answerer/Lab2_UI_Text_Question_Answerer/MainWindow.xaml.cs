@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,8 +21,8 @@ namespace Lab2_UI_Text_Question_Answerer
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<TabItem> _tabItems;
-        private TabItem _tabAdd;
+        private List<TabItem> tabItems;
+        private int tabCount;
         public MainWindow()
         {
             try
@@ -29,21 +30,17 @@ namespace Lab2_UI_Text_Question_Answerer
                 InitializeComponent();
 
                 // initialize tabItem array
-                _tabItems = new List<TabItem>();
+                tabItems = new List<TabItem>();
 
                 // add a tabItem with + in header 
                 TabItem tabAdd = new TabItem();
                 tabAdd.Header = "+";
 
-                _tabItems.Add(tabAdd);
-
-                // add first tab
-                this.AddTabItem();
+                tabItems.Add(tabAdd);
 
                 // bind tab control
-                tabDynamic.DataContext = _tabItems;
+                tabDynamic.DataContext = tabItems;
 
-                tabDynamic.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
@@ -53,27 +50,28 @@ namespace Lab2_UI_Text_Question_Answerer
 
         private TabItem AddTabItem()
         {
-            int count = _tabItems.Count;
+            int count = tabItems.Count;
 
             // create new tab item
             TabItem tab = new TabItem();
-            tab.Header = string.Format("Tab {0}", count);
-            tab.Name = string.Format("tab{0}", count);
+            tab.Header = string.Format("Tab {0}", tabCount);
+            tab.Name = string.Format("tab{0}", tabCount);
             tab.HeaderTemplate = tabDynamic.FindResource("TabHeader") as DataTemplate;
+            tabCount++;
 
             // add controls to tab item, this case I added just a text box
-            TextBox txt = new TextBox();
-            txt.Name = "txt";
-            tab.Content = txt;
+            StackPanel panel = new StackPanel();
+            tab.Content = panel;
+            tab.ContentTemplate = tabDynamic.FindResource("TabContent") as DataTemplate;
 
             // insert tab item right before the last (+) tab item
-            _tabItems.Insert(count - 1, tab);
+            tabItems.Insert(count - 1, tab);
             return tab;
         }
 
         private void tabDynamic_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            TabItem tab = tabDynamic.SelectedItem as TabItem;
+            TabItem? tab = tabDynamic.SelectedItem as TabItem;
 
             if (tab != null && tab.Header != null)
             {
@@ -86,7 +84,7 @@ namespace Lab2_UI_Text_Question_Answerer
                     TabItem newTab = this.AddTabItem();
 
                     // bind tab control
-                    tabDynamic.DataContext = _tabItems;
+                    tabDynamic.DataContext = tabItems;
 
                     // select newly added tab item
                     tabDynamic.SelectedItem = newTab;
@@ -105,9 +103,9 @@ namespace Lab2_UI_Text_Question_Answerer
 
             if (tab != null)
             {
-                if (_tabItems.Count < 3)
+                if (tabItems.Count < 2)
                 {
-                    MessageBox.Show("Cannot remove last tab.");
+                    MessageBox.Show("No tabs to remove!");
                 }
                 else if (MessageBox.Show(string.Format
                 ("Are you sure you want to remove the tab '{0}'?", tab.Header.ToString()),
@@ -119,16 +117,12 @@ namespace Lab2_UI_Text_Question_Answerer
                     // clear tab control binding
                     tabDynamic.DataContext = null;
 
-                    _tabItems.Remove(tab);
+                    tabItems.Remove(tab);
 
                     // bind tab control
-                    tabDynamic.DataContext = _tabItems;
+                    tabDynamic.DataContext = tabItems;
 
-                    // select previously selected tab. if that is removed then select first tab
-                    if (selectedTab == null || selectedTab.Equals(tab))
-                    {
-                        selectedTab = _tabItems[0];
-                    }
+                    // select previously selected tab
                     tabDynamic.SelectedItem = selectedTab;
                 }
             }
