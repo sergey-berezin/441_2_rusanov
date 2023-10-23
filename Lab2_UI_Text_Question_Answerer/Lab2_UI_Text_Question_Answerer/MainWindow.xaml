@@ -22,17 +22,18 @@
             {RelativeSource AncestorType={x:Type TabItem}}, Path=Header}" />
                     </DockPanel>
                 </DataTemplate>
-                <DataTemplate x:Key="TabContent" DataType="StackPanel">
-                    <StackPanel>
-                        <TextBox Name="BigText"/>
-                        <TextBlock Text="Your question:"/>
-                        <TextBlock Name ="QuestionTextBox"/>
-                        <Button Name ="GetAnswerBtn" Content="Get answer" />
-                        <TextBlock Text="Model answer:"/>
-                        <TextBlock Name ="AnswerTextBox"/>
-                    </StackPanel>
-                </DataTemplate>
 
+                <ControlTemplate x:Key="TabContent">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Text:" Margin="0,0,0,0" FontSize="16"/>
+                        <TextBox Name="BigText" Margin="0,0,0,10" TextWrapping="Wrap" VerticalAlignment="Top" Height="200" FontSize="14"/>
+                        <TextBlock Text="Your question:" Margin="0,0,0,0" FontSize="16"/>
+                        <TextBox Name ="QuestionTextBox" Margin="0,0,0,10" FontSize="16"/>
+                        <Button Name ="GetAnswerBtn" Content="GET ANSWER" Margin="0,0,0,10" Height="40" Width="400" FontSize="20"/>
+                        <TextBlock Text="Model answer:" Margin="0,0,0,0" FontSize="16"/>
+                        <TextBox Name ="AnswerTextBox" IsReadOnly = "True" TextWrapping="Wrap" Text ="......." Margin="0,0,0,10" Height="25" FontSize="16"/>
+                    </StackPanel>
+                </ControlTemplate>
             </TabControl.Resources>
         </TabControl>
     </Grid>

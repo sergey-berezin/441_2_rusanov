@@ -52,20 +52,19 @@ namespace Lab2_UI_Text_Question_Answerer
         {
             int count = tabItems.Count;
 
-            // create new tab item
             TabItem tab = new TabItem();
             tab.Header = string.Format("Tab {0}", tabCount);
             tab.Name = string.Format("tab{0}", tabCount);
+            ContentControl content = new ContentControl();
+            content.Template = tabDynamic.FindResource("TabContent") as ControlTemplate;
+            tab.Content = content;
+            
             tab.HeaderTemplate = tabDynamic.FindResource("TabHeader") as DataTemplate;
-            tabCount++;
 
-            // add controls to tab item, this case I added just a text box
-            StackPanel panel = new StackPanel();
-            tab.Content = panel;
-            tab.ContentTemplate = tabDynamic.FindResource("TabContent") as DataTemplate;
-
-            // insert tab item right before the last (+) tab item
+            
             tabItems.Insert(count - 1, tab);
+
+            tabCount++;
             return tab;
         }
 
