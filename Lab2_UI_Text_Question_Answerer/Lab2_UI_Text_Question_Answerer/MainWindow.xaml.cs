@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BertViewModel;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
@@ -28,6 +30,7 @@ namespace Lab2_UI_Text_Question_Answerer
             try
             {
                 InitializeComponent();
+                DataContext = new MainViewModel(new MessageBoxErrorSender(), new SaveAndLoadFileDialog());
 
                 // initialize tabItem array
                 tabItems = new List<TabItem>();
@@ -48,8 +51,32 @@ namespace Lab2_UI_Text_Question_Answerer
             }
         }
 
+        public class MessageBoxErrorSender : IErrorSender
+        {
+            public void SendError(string message) => MessageBox.Show(message);
+        }
+        public class SaveAndLoadFileDialog : IFileDialog
+        {
+            public string OpenFileDialog()
+            {
+                try
+                {
+                    string resultFileName = "";
+                    OpenFileDialog openFileDialog = new OpenFileDialog();
+                    if (openFileDialog.ShowDialog() == true)
+                        resultFileName = openFileDialog.FileName;
+                    return resultFileName;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Не удалось открыть файл: " + ex.Message);
+                }
+            }
+        }
+
         private TabItem AddTabItem()
         {
+
             int count = tabItems.Count;
 
             TabItem tab = new TabItem();
