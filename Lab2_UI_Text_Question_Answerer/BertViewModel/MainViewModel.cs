@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using BertModelLibrary;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,9 @@ namespace BertViewModel
 {
     public class MainViewModel: BaseViewModel
     {
+        private string modelWebSource = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
+
+        private BertModel bertModel;
         public ObservableCollection<TabItemViewModel> TabItems { get; set; } = new ObservableCollection<TabItemViewModel>();
         public int SelectedTab { get; set; }
 
@@ -27,18 +31,38 @@ namespace BertViewModel
 
         public MainViewModel(IErrorSender errorSender, IFileDialog fileDialog)
         {
+
+            getBertModel();
             this.fileDialog = fileDialog;
             this.errorSender = errorSender;
             NewTabCommand = new RelayCommand(o => { NewTabCommandHandler(); });
             RemoveTabCommand = new RelayCommand(o => { RemoveTabCommandHandler(o); });
-            //GetAnswerCommand = new AsyncRelayCommand(o => { ComputeSplineCommandHandler(); }, o => CanComputeSplineCommandHandler());
+
+
+
+        }
+
+        private async void getBertModel()
+        {
+            var createTask = BertModel.Create(modelWebSource);
+            while (true && !createTask.IsCompleted)
+            {
+                lock (BertModel.progressBar)
+                {
+                    while (BertModel.progressBar.Count > 0)
+                        Console.Out.WriteLine(BertModel.progressBar.Dequeue());
+                }
+            }
+            bertModel = await createTask;
         }
 
         private void NewTabCommandHandler()
         {
             try
             {
-                TabItems.Add(new TabItemViewModel(string.Format("Tab {0}", tabCount), errorSender, fileDialog));
+
+                CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
+                TabItems.Add(new TabItemViewModel(string.Format("Tab {0}", tabCount), bertModel, cancelTokenSource, errorSender, fileDialog));
                 SelectedTab = TabItems.Count - 1;
                 RaisePropertyChanged("TabItems");
                 RaisePropertyChanged("SelectedTab");

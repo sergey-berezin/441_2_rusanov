@@ -159,8 +159,12 @@ namespace BertModelLibrary
                                     .ToList();
 
                         // Print the result.
+                        Task.Delay(5000).Wait();
 
-                        Task.Delay(3000).Wait();
+                        if (token.IsCancellationRequested)
+                            token.ThrowIfCancellationRequested();
+
+                        Task.Delay(5000).Wait();
 
                         if (token.IsCancellationRequested)
                             token.ThrowIfCancellationRequested();

@@ -1,16 +1,20 @@
-﻿using System;
+﻿using BertModelLibrary;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BertViewModel
 {
-    public class TabItemViewModel : BaseViewModel
+    public class TabItemViewModel : BaseViewModel, IDataErrorInfo
     {
         public string TabName { get; set; }
+        public bool CancelEnabled { get; set; } = false;
 
         public String TextFromFile { get; set; } = "";
         public String Question { get; set; } = "";
@@ -18,15 +22,38 @@ namespace BertViewModel
         private readonly IErrorSender errorSender;
         private readonly IFileDialog fileDialog;
 
+        private BertModel bertModel;
+        private CancellationTokenSource tokenSource;
+
         public ICommand LoadTextFileCommand { get; private set; }
         public ICommand GetAnswerCommand { get; private set; }
-        public TabItemViewModel(string tabName, IErrorSender errorSender, IFileDialog fileDialog)
+        public ICommand CancelAnswerCommand { get; private set; }
+        public TabItemViewModel(string tabName, BertModel bertModel, CancellationTokenSource tokenSource, IErrorSender errorSender, IFileDialog fileDialog)
         {
             this.TabName = tabName;
             this.fileDialog = fileDialog;
             this.errorSender = errorSender;
+            this.bertModel = bertModel;
+            this.tokenSource = tokenSource;
             LoadTextFileCommand = new RelayCommand(_ => { LoadTextFileCommandHandler();});
-            //GetAnswerCommand = new AsyncRelayCommand(o => { ComputeSplineCommandHandler(); }, o => CanComputeSplineCommandHandler());
+            CancelAnswerCommand = new RelayCommand(_ => {
+                CancelEnabled = false;
+                RaisePropertyChanged("CancelEnabled");
+                tokenSource.Cancel(); 
+            });
+            GetAnswerCommand = new AsyncRelayCommand(async _ =>
+            {
+                CancelEnabled = true;
+                RaisePropertyChanged("CancelEnabled");
+                CancellationToken token = tokenSource.Token;
+                await ProcessQuestionAsync(bertModel, TextFromFile, Question, token);
+                CancelEnabled = false;
+                RaisePropertyChanged("CancelEnabled");
+            },
+            _ =>
+            {
+                return string.IsNullOrEmpty(this["TextFromFile"]) && string.IsNullOrEmpty(this["Question"]);
+            });
         }
 
         private void LoadTextFileCommandHandler()
@@ -77,6 +104,45 @@ namespace BertViewModel
                     reader.Dispose();
             }
         }
+
+        private async Task ProcessQuestionAsync(BertModel bertModel, string text, string question, CancellationToken token)
+        {
+            try
+            {
+                var answer = await Task.Run(() => bertModel.AnswerQuestionAsync(text, question, token));
+                Answer = answer;
+                RaisePropertyChanged("Answer");
+            }
+            catch (Exception ex)
+            {
+                errorSender.SendError("Ошибка:" + ex.Message);
+            }
+        }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                string error = string.Empty;
+                switch (columnName)
+                {
+                    case "TextFromFile":
+                        if (TextFromFile.Length == 0)
+                        {
+                            error = "Введите входной текст!";
+                        }
+                        break;
+                    case "Question":
+                        if (Question.Length == 0)
+                        {
+                            error = "Введите вопрос!";
+                        }
+                        break;
+                }
+                return error;
+            }
+        }
+        public string Error { get; }
 
     }
 }
