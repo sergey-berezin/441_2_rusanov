@@ -3,38 +3,41 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Lab2_UI_Text_Question_Answerer"
+        xmlns:local="clr-namespace:Lab2_UI_Text_Question_Answerer" xmlns:bertviewmodel="clr-namespace:BertViewModel;assembly=BertViewModel" d:DataContext="{d:DesignInstance Type=bertviewmodel:TabItemViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="550" Width="800">
 
     <Grid>
-        <TabControl Name="tabDynamic" ItemsSource="{Binding}" 
- SelectionChanged="tabDynamic_SelectionChanged">
-            <TabControl.Resources>
-                <DataTemplate x:Key="TabHeader" DataType="TabItem">
-                    <DockPanel>
-                        <Button Name="btnDelete" DockPanel.Dock="Right" 
-                 Margin="5,0,0,0" Padding="0" Click="btnDelete_Click" Content="X"
-                 CommandParameter="{Binding RelativeSource=
-                 {RelativeSource AncestorType={x:Type TabItem}}, Path=Name}">
-                        </Button>
-                        <TextBlock Text="{Binding RelativeSource=
-            {RelativeSource AncestorType={x:Type TabItem}}, Path=Header}" />
-                    </DockPanel>
-                </DataTemplate>
-
-                <ControlTemplate x:Key="TabContent">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="Text:" Margin="0,0,0,0" FontSize="16"/>
-                        <TextBox Name="BigText" Margin="0,0,0,10" TextWrapping="Wrap" VerticalAlignment="Top" Height="200" FontSize="14"/>
-                        <TextBlock Text="Your question:" Margin="0,0,0,0" FontSize="16"/>
-                        <TextBox Name ="QuestionTextBox" Margin="0,0,0,10" FontSize="16"/>
-                        <Button Name ="GetAnswerBtn" Content="GET ANSWER" Margin="0,0,0,10" Height="40" Width="400" FontSize="20"/>
-                        <TextBlock Text="Model answer:" Margin="0,0,0,0" FontSize="16"/>
-                        <TextBox Name ="AnswerTextBox" IsReadOnly = "True" TextWrapping="Wrap" Text ="......." Margin="0,0,0,10" Height="25" FontSize="16"/>
-                    </StackPanel>
-                </ControlTemplate>
-            </TabControl.Resources>
-        </TabControl>
+        <StackPanel Orientation="Vertical">
+            <Button Name ="AddTabBtn" Content="NEW TAB" Margin="0,5,0,5" Height="25" Width="110" FontSize="14" Command="{Binding NewTabCommand}"/>
+            <TabControl Name="tabDynamic" ItemsSource="{Binding TabItems, Mode=TwoWay}" SelectedIndex="{Binding SelectedTab}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <Button Name="btnDelete" DockPanel.Dock="Right" 
+                 Margin="5,0,0,0" Padding="0" Click="btnDelete_Click" Content="X" Command="{Binding RelativeSource=
+                 {RelativeSource AncestorType={x:Type TabControl}}, Path=DataContext.RemoveTabCommand}" CommandParameter="{Binding RelativeSource=
+                 {RelativeSource AncestorType={x:Type TabItem}}, Path=Header}">
+                            </Button>
+                            <TextBlock Text="{Binding Path=TabName}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical">
+                            <Button Name ="LoadTextBtn" Command="{Binding LoadTextFileCommand}" Content="LOAD TEXT FILE" Margin="0,5,0,5" Height="25" Width="200" FontSize="14"/>
+                            <TextBlock Text="Text:" Margin="0,0,0,0" FontSize="16"/>
+                            <TextBox Name="BigText" Text ="{Binding TextFromFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" TextWrapping="Wrap" VerticalAlignment="Top" Height="200" FontSize="14"/>
+                            <TextBlock Text="Your question:" Margin="0,0,0,0" FontSize="16"/>
+                            <TextBox Name ="QuestionTextBox" Text ="{Binding Question, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" FontSize="16"/>
+                            <Button Name ="GetAnswerBtn" Content="GET ANSWER" Margin="0,0,0,10" Height="40" Width="400" FontSize="20"/>
+                            <TextBlock Text="Model answer:" Margin="0,0,0,0" FontSize="16"/>
+                            <TextBox Name ="AnswerTextBox" IsReadOnly = "True" TextWrapping="Wrap" Text ="{Binding Answer, Mode=TwoWay}"  Margin="0,0,0,10" Height="25" FontSize="16"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
+        </StackPanel>
     </Grid>
 </Window>

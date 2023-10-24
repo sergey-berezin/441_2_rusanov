@@ -23,8 +23,8 @@ namespace Lab2_UI_Text_Question_Answerer
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<TabItem> tabItems;
-        private int tabCount;
+        //private List<TabItem> tabItems;
+        //private int tabCount;
         public MainWindow()
         {
             try
@@ -33,16 +33,16 @@ namespace Lab2_UI_Text_Question_Answerer
                 DataContext = new MainViewModel(new MessageBoxErrorSender(), new SaveAndLoadFileDialog());
 
                 // initialize tabItem array
-                tabItems = new List<TabItem>();
+                //tabItems = new List<TabItem>();
 
                 // add a tabItem with + in header 
-                TabItem tabAdd = new TabItem();
-                tabAdd.Header = "+";
+                //TabItem tabAdd = new TabItem();
+                //tabAdd.Header = "+";
 
-                tabItems.Add(tabAdd);
+                //tabItems.Add(tabAdd);
 
                 // bind tab control
-                tabDynamic.DataContext = tabItems;
+                //tabDynamic.DataContext = tabItems;
 
             }
             catch (Exception ex)
@@ -74,7 +74,7 @@ namespace Lab2_UI_Text_Question_Answerer
             }
         }
 
-        private TabItem AddTabItem()
+        /*private TabItem AddTabItem()
         {
 
             int count = tabItems.Count;
@@ -93,11 +93,11 @@ namespace Lab2_UI_Text_Question_Answerer
 
             tabCount++;
             return tab;
-        }
+        }*/
 
         private void tabDynamic_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            TabItem? tab = tabDynamic.SelectedItem as TabItem;
+            /*TabItem? tab = tabDynamic.SelectedItem as TabItem;
 
             if (tab != null && tab.Header != null)
             {
@@ -115,12 +115,12 @@ namespace Lab2_UI_Text_Question_Answerer
                     // select newly added tab item
                     tabDynamic.SelectedItem = newTab;
                 }
-            }
+            }*/
         }
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            string tabName = (sender as Button).CommandParameter.ToString();
+            /*string tabName = (sender as Button).CommandParameter.ToString();
 
             var item = tabDynamic.Items.Cast<TabItem>().Where
                        (i => i.Name.Equals(tabName)).SingleOrDefault();
@@ -151,7 +151,7 @@ namespace Lab2_UI_Text_Question_Answerer
                     // select previously selected tab
                     tabDynamic.SelectedItem = selectedTab;
                 }
-            }
+            }*/
         }
     }
 

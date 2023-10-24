@@ -1,44 +1,48 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace BertViewModel
 {
     public class MainViewModel: BaseViewModel
     {
+        public ObservableCollection<TabItemViewModel> TabItems { get; set; } = new ObservableCollection<TabItemViewModel>();
+        public int SelectedTab { get; set; }
 
-        public String textFromFile { get; set; } = "";
-        public String userQuestion = "....";
+        private int tabCount = 0;
 
         private readonly IErrorSender errorSender;
         private readonly IFileDialog fileDialog;
-        public ICommand LoadTextFileCommand { get; private set; }
-        public ICommand GetAnswerCommand { get; private set; }
+        public ICommand NewTabCommand { get; private set; }
+        public ICommand RemoveTabCommand { get; private set; }
 
         public MainViewModel(IErrorSender errorSender, IFileDialog fileDialog)
         {
-
-            this.errorSender = errorSender;
             this.fileDialog = fileDialog;
-            LoadTextFileCommand = new AsyncRelayCommand(_ => { LoadTextFileCommandHandler(); return Task.CompletedTask; });
+            this.errorSender = errorSender;
+            NewTabCommand = new RelayCommand(o => { NewTabCommandHandler(); });
+            RemoveTabCommand = new RelayCommand(o => { RemoveTabCommandHandler(o); });
             //GetAnswerCommand = new AsyncRelayCommand(o => { ComputeSplineCommandHandler(); }, o => CanComputeSplineCommandHandler());
         }
 
-        private void LoadTextFileCommandHandler()
+        private void NewTabCommandHandler()
         {
             try
             {
-                string filename = fileDialog.OpenFileDialog();
-                if (!string.IsNullOrEmpty(filename))
-                {
-                    LoadFile(filename);
-                    RaisePropertyChanged("textFromFile");
-                }
+                TabItems.Add(new TabItemViewModel(string.Format("Tab {0}", tabCount), errorSender, fileDialog));
+                SelectedTab = TabItems.Count - 1;
+                RaisePropertyChanged("TabItems");
+                RaisePropertyChanged("SelectedTab");
+                tabCount++;
             }
             catch (Exception ex)
             {
@@ -46,36 +50,24 @@ namespace BertViewModel
             }
         }
 
-        private void LoadFile(string filename)
+        private void RemoveTabCommandHandler(object sender)
         {
             try
             {
-                textFromFile = GetTextFromFile(path: filename);
+                TabItemViewModel item = sender as TabItemViewModel;
+                string tabName = item.TabName;
+                int index = TabItems.IndexOf(item);
+                if (SelectedTab == index)
+                    SelectedTab = SelectedTab - 1;
+                TabItems.RemoveAt(index);
+                RaisePropertyChanged("TabItems");
+                RaisePropertyChanged("SelectedTab");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                errorSender.SendError("Ошибка:" + ex.Message);
             }
         }
 
-        static string GetTextFromFile(string path)
-        {
-            StreamReader? reader = null;
-            try
-            {
-                reader = new StreamReader(path);
-                string text = reader.ReadToEnd();
-                return text;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                if (reader != null)
-                    reader.Dispose();
-            }
-        }
     }
 }
