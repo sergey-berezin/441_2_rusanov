@@ -25,15 +25,10 @@ namespace Lab2_UI_Text_Question_Answerer
     {
         public MainWindow()
         {
-            try
-            {
-                InitializeComponent();
-                DataContext = new MainViewModel(new MessageBoxErrorSender(), new SaveAndLoadFileDialog());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            InitializeComponent();
+            MainViewModel mainViewModel = new MainViewModel(new MessageBoxErrorSender(), new SaveAndLoadFileDialog());
+            mainViewModel.getBertModel();
+            DataContext = mainViewModel;
         }
 
         public class MessageBoxErrorSender : IErrorSender

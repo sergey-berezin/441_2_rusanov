@@ -28,7 +28,7 @@ namespace BertModelLibrary
             {
                 String path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-                var modelPath = Path.Combine(path, "bert-large-uncased-whole-word-masking-finetuned-squad.onnx");
+                var modelPath = Path.Combine(path, "bert-large-uncased-whole-word-masking-finetuned-squad.onnx11");
 
                 string downaloadedModelPath = modelPath;
 

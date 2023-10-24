@@ -16,7 +16,7 @@ namespace BertViewModel
 {
     public class MainViewModel : BaseViewModel
     {
-        private string modelWebSource = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx111";
+        private string modelWebSource = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
 
         private BertModel bertModel;
         public ObservableCollection<TabItemViewModel> TabItems { get; set; } = new ObservableCollection<TabItemViewModel>();
@@ -35,10 +35,9 @@ namespace BertViewModel
             this.errorSender = errorSender;
             NewTabCommand = new RelayCommand(o => { NewTabCommandHandler(); });
             RemoveTabCommand = new RelayCommand(o => { RemoveTabCommandHandler(o); });
-            getBertModel();
         }
 
-        private async void getBertModel()
+        public async void getBertModel()
         {
             try
             {
