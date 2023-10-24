@@ -28,18 +28,19 @@ namespace BertViewModel
         public ICommand LoadTextFileCommand { get; private set; }
         public ICommand GetAnswerCommand { get; private set; }
         public ICommand CancelAnswerCommand { get; private set; }
-        public TabItemViewModel(string tabName, BertModel bertModel, CancellationTokenSource tokenSource, IErrorSender errorSender, IFileDialog fileDialog)
+        public TabItemViewModel(string tabName, BertModel bertModel, IErrorSender errorSender, IFileDialog fileDialog)
         {
             this.TabName = tabName;
             this.fileDialog = fileDialog;
             this.errorSender = errorSender;
             this.bertModel = bertModel;
-            this.tokenSource = tokenSource;
+            this.tokenSource = new CancellationTokenSource();
             LoadTextFileCommand = new RelayCommand(_ => { LoadTextFileCommandHandler();});
             CancelAnswerCommand = new RelayCommand(_ => {
                 CancelEnabled = false;
                 RaisePropertyChanged("CancelEnabled");
-                tokenSource.Cancel(); 
+                tokenSource.Cancel();
+                tokenSource = new CancellationTokenSource();
             });
             GetAnswerCommand = new AsyncRelayCommand(async _ =>
             {

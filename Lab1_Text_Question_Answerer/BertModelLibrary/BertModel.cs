@@ -49,7 +49,6 @@ namespace BertModelLibrary
         {
             try
             {
-
                 var httpClient = new HttpClient();
                 int retriesRemain = 5;
                 bool isDownloaded = false;

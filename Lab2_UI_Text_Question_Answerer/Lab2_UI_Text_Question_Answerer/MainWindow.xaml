@@ -20,7 +20,14 @@
     </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">
-            <Button Name ="AddTabBtn" Content="NEW TAB" Margin="0,5,0,5" Height="25" Width="110" FontSize="14" Command="{Binding NewTabCommand}"/>
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Name ="AddTabBtn" Grid.Column="0" Content="NEW TAB" Margin="0,5,0,5" Height="25" Width="110" FontSize="14" Command="{Binding NewTabCommand}"/>
+                <TextBlock Grid.Column="1" Text="{Binding DownloadingValue}" Margin="0,5,0,5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14"/>
+            </Grid>
             <TabControl Name="tabDynamic" ItemsSource="{Binding TabItems, Mode=TwoWay}" SelectedIndex="{Binding SelectedTab}">
                 <TabControl.ItemTemplate>
                     <DataTemplate>

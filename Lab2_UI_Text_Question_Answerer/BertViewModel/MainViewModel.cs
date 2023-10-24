@@ -14,14 +14,14 @@ using System.Windows.Input;
 
 namespace BertViewModel
 {
-    public class MainViewModel: BaseViewModel
+    public class MainViewModel : BaseViewModel
     {
-        private string modelWebSource = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
+        private string modelWebSource = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx111";
 
         private BertModel bertModel;
         public ObservableCollection<TabItemViewModel> TabItems { get; set; } = new ObservableCollection<TabItemViewModel>();
         public int SelectedTab { get; set; }
-
+        public string DownloadingValue { get; set; } = "....";
         private int tabCount = 0;
 
         private readonly IErrorSender errorSender;
@@ -31,38 +31,44 @@ namespace BertViewModel
 
         public MainViewModel(IErrorSender errorSender, IFileDialog fileDialog)
         {
-
-            getBertModel();
             this.fileDialog = fileDialog;
             this.errorSender = errorSender;
             NewTabCommand = new RelayCommand(o => { NewTabCommandHandler(); });
             RemoveTabCommand = new RelayCommand(o => { RemoveTabCommandHandler(o); });
-
-
-
+            getBertModel();
         }
 
         private async void getBertModel()
         {
-            var createTask = BertModel.Create(modelWebSource);
-            while (true && !createTask.IsCompleted)
+            try
             {
-                lock (BertModel.progressBar)
+                var createTask = BertModel.Create(modelWebSource);
+                while (true && !createTask.IsCompleted)
                 {
-                    while (BertModel.progressBar.Count > 0)
-                        Console.Out.WriteLine(BertModel.progressBar.Dequeue());
+                    lock (BertModel.progressBar)
+                    {
+                        while (BertModel.progressBar.Count > 0)
+                        {
+                            DownloadingValue = BertModel.progressBar.Dequeue();
+                            RaisePropertyChanged("DownloadingValue");
+                        }
+
+                    }
                 }
+                bertModel = await createTask;
             }
-            bertModel = await createTask;
+            catch(Exception ex)
+            {
+                errorSender.SendError("Ошибка:" + ex.Message);
+            }
+            
         }
 
         private void NewTabCommandHandler()
         {
             try
             {
-
-                CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
-                TabItems.Add(new TabItemViewModel(string.Format("Tab {0}", tabCount), bertModel, cancelTokenSource, errorSender, fileDialog));
+                TabItems.Add(new TabItemViewModel(string.Format("Tab {0}", tabCount), bertModel, errorSender, fileDialog));
                 SelectedTab = TabItems.Count - 1;
                 RaisePropertyChanged("TabItems");
                 RaisePropertyChanged("SelectedTab");

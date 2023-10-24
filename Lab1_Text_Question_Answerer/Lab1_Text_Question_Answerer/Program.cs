@@ -21,7 +21,7 @@ namespace Lab1_Text_Question_Answerer
                     //string path = "..\\..\\..\\..\\hole.txt";
                     //string path = "..\\..\\..\\..\\gandalf.txt";
                     string text = GetTextFromFile(path);
-                    string modelWebSource = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
+                    string modelWebSource = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx1";
                     Console.WriteLine(text);
 
                     CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
