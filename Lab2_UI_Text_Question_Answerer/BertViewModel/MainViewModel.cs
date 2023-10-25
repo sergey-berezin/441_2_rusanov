@@ -40,8 +40,8 @@ namespace BertViewModel
         {
             try
             {
-                bertModel = new BertModel();
-                var createTask = bertModel.Create(modelWebSource);
+                bertModel = new BertModel(modelWebSource);
+                var createTask = bertModel.Create();
                 await createTask;
             }
             catch(Exception ex)

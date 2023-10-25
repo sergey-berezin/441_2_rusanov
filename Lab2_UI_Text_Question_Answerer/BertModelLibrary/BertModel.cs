@@ -17,12 +17,14 @@ namespace BertModelLibrary
         private InferenceSession session;
         static Semaphore sessionSemaphore = new Semaphore(1, 1);
         static bool isDownloaded = false;
+        static string modelWebSource = "";
 
-        public BertModel()
+        public BertModel(string webSource)
         {
+            modelWebSource = webSource;
         }
 
-        public async Task Create(string modelWebSource)
+        public async Task Create()
         {
             try
             {
