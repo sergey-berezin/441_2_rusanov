@@ -21,7 +21,6 @@ namespace BertViewModel
         private BertModel bertModel;
         public ObservableCollection<TabItemViewModel> TabItems { get; set; } = new ObservableCollection<TabItemViewModel>();
         public int SelectedTab { get; set; }
-        public string DownloadingValue { get; set; } = "....";
         private int tabCount = 0;
 
         private readonly IErrorSender errorSender;
@@ -37,24 +36,13 @@ namespace BertViewModel
             RemoveTabCommand = new RelayCommand(o => { RemoveTabCommandHandler(o); });
         }
 
-        public async void getBertModel()
+        public async void GetBertModel()
         {
             try
             {
-                var createTask = BertModel.Create(modelWebSource);
-                while (true && !createTask.IsCompleted)
-                {
-                    lock (BertModel.progressBar)
-                    {
-                        while (BertModel.progressBar.Count > 0)
-                        {
-                            DownloadingValue = BertModel.progressBar.Dequeue();
-                            RaisePropertyChanged("DownloadingValue");
-                        }
-
-                    }
-                }
-                bertModel = await createTask;
+                bertModel = new BertModel();
+                var createTask = bertModel.Create(modelWebSource);
+                await createTask;
             }
             catch(Exception ex)
             {

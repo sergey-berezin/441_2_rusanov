@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab2_UI_Text_Question_Answerer" xmlns:bertviewmodel="clr-namespace:BertViewModel;assembly=BertViewModel" d:DataContext="{d:DesignInstance Type=bertviewmodel:TabItemViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="800">
+        Title="MainWindow" Height="570" Width="800">
     <Window.Resources>
         <Style TargetType="TextBox">
             <Style.Triggers>
@@ -20,14 +20,7 @@
     </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button Name ="AddTabBtn" Grid.Column="0" Content="NEW TAB" Margin="0,5,0,5" Height="25" Width="110" FontSize="14" Command="{Binding NewTabCommand}"/>
-                <TextBlock Grid.Column="1" Text="{Binding DownloadingValue}" Margin="0,5,0,5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14"/>
-            </Grid>
+            <Button Name ="AddTabBtn" Content="NEW TAB" Margin="0,5,0,5" Height="25" Width="110" FontSize="14" Command="{Binding NewTabCommand}"/>
             <TabControl Name="tabDynamic" ItemsSource="{Binding TabItems, Mode=TwoWay}" SelectedIndex="{Binding SelectedTab}">
                 <TabControl.ItemTemplate>
                     <DataTemplate>

@@ -27,7 +27,7 @@ namespace Lab2_UI_Text_Question_Answerer
         {
             InitializeComponent();
             MainViewModel mainViewModel = new MainViewModel(new MessageBoxErrorSender(), new SaveAndLoadFileDialog());
-            mainViewModel.getBertModel();
+            mainViewModel.GetBertModel();
             DataContext = mainViewModel;
         }
 

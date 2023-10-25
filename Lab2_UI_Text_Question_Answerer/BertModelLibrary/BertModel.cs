@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace BertModelLibrary
@@ -15,14 +16,13 @@ namespace BertModelLibrary
     {
         private InferenceSession session;
         static Semaphore sessionSemaphore = new Semaphore(1, 1);
-        static public Queue<string> progressBar = new Queue<string>();
+        static bool isDownloaded = false;
 
-        private BertModel(InferenceSession inferenceSession)
+        public BertModel()
         {
-            this.session = inferenceSession;
         }
 
-        public static async Task<BertModel> Create(string modelWebSource)
+        public async Task Create(string modelWebSource)
         {
             try
             {
@@ -36,7 +36,11 @@ namespace BertModelLibrary
                 {
                     downaloadedModelPath = await DownloadModel(modelPath, modelWebSource);
                 }
-                return new BertModel(new InferenceSession(downaloadedModelPath));
+                else
+                {
+                    isDownloaded = true;
+                }
+                this.session = new InferenceSession(downaloadedModelPath);
             }
             catch
             {
@@ -52,27 +56,18 @@ namespace BertModelLibrary
 
                 var httpClient = new HttpClient();
                 int retriesRemain = 5;
-                bool isDownloaded = false;
                 while (retriesRemain > 0 && !isDownloaded)
                 {
                     try
                     {
                         using var stream = await httpClient.GetStreamAsync(modelWebSource);
                         using var fileStream = new FileStream(modelPath, FileMode.CreateNew);
-                        lock (progressBar)
-                        {
-                            progressBar.Enqueue("Downloading model...");
-                        }
                         await stream.CopyToAsync(fileStream);
                         isDownloaded = true;
                     }
                     catch (Exception)
                     {
                         retriesRemain--;
-                        lock (progressBar)
-                        {
-                            progressBar.Enqueue($"Remains {retriesRemain} attempts to download model!");
-                        }
                         await Task.Delay(1000);
                     }
 
@@ -97,6 +92,8 @@ namespace BertModelLibrary
                 {
                     try
                     {
+                        if (!isDownloaded)
+                            throw new Exception("Model is not downloaded!");
                         if (token.IsCancellationRequested)
                             token.ThrowIfCancellationRequested();
 
