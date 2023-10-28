@@ -110,7 +110,7 @@ namespace BertViewModel
         {
             try
             {
-                var answer = await Task.Run(() => bertModel.AnswerQuestionAsync(text, question, token));
+                var answer = await bertModel.AnswerQuestionAsync(text, question, token);
                 Answer = answer;
                 RaisePropertyChanged(nameof(Answer));
             }
