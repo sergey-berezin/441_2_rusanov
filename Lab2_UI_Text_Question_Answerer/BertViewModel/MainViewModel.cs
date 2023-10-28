@@ -57,8 +57,8 @@ namespace BertViewModel
             {
                 TabItems.Add(new TabItemViewModel(string.Format("Tab {0}", tabCount), bertModel, errorSender, fileDialog));
                 SelectedTab = TabItems.Count - 1;
-                RaisePropertyChanged("TabItems");
-                RaisePropertyChanged("SelectedTab");
+                RaisePropertyChanged(nameof(TabItems));
+                RaisePropertyChanged(nameof(SelectedTab));
                 tabCount++;
             }
             catch (Exception ex)
@@ -77,8 +77,8 @@ namespace BertViewModel
                 if (SelectedTab == index)
                     SelectedTab = SelectedTab - 1;
                 TabItems.RemoveAt(index);
-                RaisePropertyChanged("TabItems");
-                RaisePropertyChanged("SelectedTab");
+                RaisePropertyChanged(nameof(TabItems));
+                RaisePropertyChanged(nameof(SelectedTab));
             }
             catch (Exception ex)
             {

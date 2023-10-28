@@ -38,18 +38,18 @@ namespace BertViewModel
             LoadTextFileCommand = new RelayCommand(_ => { LoadTextFileCommandHandler();});
             CancelAnswerCommand = new RelayCommand(_ => {
                 CancelEnabled = false;
-                RaisePropertyChanged("CancelEnabled");
+                RaisePropertyChanged(nameof(CancelEnabled));
                 tokenSource.Cancel();
                 tokenSource = new CancellationTokenSource();
             });
             GetAnswerCommand = new AsyncRelayCommand(async _ =>
             {
                 CancelEnabled = true;
-                RaisePropertyChanged("CancelEnabled");
+                RaisePropertyChanged(nameof(CancelEnabled));
                 CancellationToken token = tokenSource.Token;
                 await ProcessQuestionAsync(bertModel, TextFromFile, Question, token);
                 CancelEnabled = false;
-                RaisePropertyChanged("CancelEnabled");
+                RaisePropertyChanged(nameof(CancelEnabled));
             },
             _ =>
             {
@@ -65,7 +65,7 @@ namespace BertViewModel
                 if (!string.IsNullOrEmpty(filename))
                 {
                     LoadFile(filename);
-                    RaisePropertyChanged("TextFromFile");
+                    RaisePropertyChanged(nameof(TextFromFile));
                 }
             }
             catch (Exception ex)
@@ -112,7 +112,7 @@ namespace BertViewModel
             {
                 var answer = await Task.Run(() => bertModel.AnswerQuestionAsync(text, question, token));
                 Answer = answer;
-                RaisePropertyChanged("Answer");
+                RaisePropertyChanged(nameof(Answer));
             }
             catch (Exception ex)
             {
