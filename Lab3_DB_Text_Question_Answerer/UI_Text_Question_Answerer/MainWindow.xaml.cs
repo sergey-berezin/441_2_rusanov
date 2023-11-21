@@ -2,7 +2,10 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO.IsolatedStorage;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,12 +25,20 @@ namespace UI_Text_Question_Answerer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainViewModel mainViewModel;
         public MainWindow()
         {
             InitializeComponent();
-            MainViewModel mainViewModel = new MainViewModel(new MessageBoxErrorSender(), new SaveAndLoadFileDialog());
+            mainViewModel = new MainViewModel(new MessageBoxErrorSender(), new SaveAndLoadFileDialog());
             mainViewModel.GetBertModel();
+            mainViewModel.LoadfromDB();
             DataContext = mainViewModel;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            mainViewModel.SaveDataToDb();
         }
 
         public class MessageBoxErrorSender : IErrorSender
@@ -53,5 +64,7 @@ namespace UI_Text_Question_Answerer
                 }
             }
         }
+
+
     }
 }

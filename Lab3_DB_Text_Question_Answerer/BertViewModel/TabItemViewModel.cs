@@ -1,4 +1,5 @@
 ﻿using BertModelLibrary;
+using DBModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,18 +26,27 @@ namespace BertViewModel
         private BertModel bertModel;
         private CancellationTokenSource tokenSource;
 
+        private TextTabContext Database;
+        public int DbTabId;
+
         public ICommand LoadTextFileCommand { get; private set; }
         public ICommand GetAnswerCommand { get; private set; }
         public ICommand CancelAnswerCommand { get; private set; }
-        public TabItemViewModel(string tabName, BertModel bertModel, IErrorSender errorSender, IFileDialog fileDialog)
+        public TabItemViewModel(string tabName, BertModel bertModel, IErrorSender errorSender, IFileDialog fileDialog, TextTabContext database, int DbTabId, string text = "", string question = "", string answer = "....")
         {
             this.TabName = tabName;
             this.fileDialog = fileDialog;
             this.errorSender = errorSender;
             this.bertModel = bertModel;
+            this.TextFromFile = text;
+            this.Question = question;
+            this.Answer = answer;
+            this.Database = database;
+            this.DbTabId = DbTabId;
             this.tokenSource = new CancellationTokenSource();
-            LoadTextFileCommand = new RelayCommand(_ => { LoadTextFileCommandHandler();});
-            CancelAnswerCommand = new RelayCommand(_ => {
+            LoadTextFileCommand = new RelayCommand(_ => { LoadTextFileCommandHandler(); });
+            CancelAnswerCommand = new RelayCommand(_ =>
+            {
                 CancelEnabled = false;
                 RaisePropertyChanged(nameof(CancelEnabled));
                 tokenSource.Cancel();
@@ -110,8 +120,21 @@ namespace BertViewModel
         {
             try
             {
-                var answer = await bertModel.AnswerQuestionAsync(text, question, token);
-                Answer = answer;
+                var questionsFromDb = Database.QuestionsAndAnswers.Where(q => q.Question == question);
+                if (questionsFromDb.Any())
+                {
+                    Answer = questionsFromDb.First().Answer;
+                }
+                else
+                {
+                    var answer = await bertModel.AnswerQuestionAsync(text, question, token);
+                    Answer = answer;
+                    if (!token.IsCancellationRequested)
+                    {
+                        Database.QuestionsAndAnswers.Add(new QuestionAndAnswer { Question = question, Answer = Answer, TextTabId = DbTabId });
+                        Database.SaveChanges();
+                    }
+                }
                 RaisePropertyChanged(nameof(Answer));
             }
             catch (Exception ex)

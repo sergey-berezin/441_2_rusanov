@@ -20,7 +20,14 @@
     </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">
-            <Button Name ="AddTabBtn" Content="NEW TAB" Margin="0,5,0,5" Height="25" Width="110" FontSize="14" Command="{Binding NewTabCommand}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="0.4*" />
+                </Grid.ColumnDefinitions>
+                <Button Name ="AddTabBtn" Grid.Column="0" Content="NEW TAB" Margin="0,5,0,5" Height="25" Width="110" FontSize="14" Command="{Binding NewTabCommand}"/>
+                <Button Name ="ClearDbBtn" Grid.Column="1" Content="CLEAR" Margin="0,5,0,5" Height="25" Width="110" FontSize="14" Command="{Binding ClearAllCommand}"/>
+            </Grid>
             <TabControl Name="tabDynamic" ItemsSource="{Binding TabItems, Mode=TwoWay}" SelectedIndex="{Binding SelectedTab}">
                 <TabControl.ItemTemplate>
                     <DataTemplate>

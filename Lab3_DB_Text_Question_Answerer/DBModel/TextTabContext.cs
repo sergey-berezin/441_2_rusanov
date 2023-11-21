@@ -9,15 +9,13 @@ namespace DBModel
 {
     public class TextTabContext : DbContext
     {
-        public DbSet<TextTab> TextTab { get; set; }
-        public DbSet<QuestionAndAnswer> QuestionAndAnswer { get; set; }
+        public DbSet<TextTab> TextTabs { get; set; }
+        public DbSet<QuestionAndAnswer> QuestionsAndAnswers { get; set; }
 
         protected override void OnConfiguring(
             DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(
-                "Data Source=textTabs.db");
-            //optionsBuilder.UseLazyLoadingProxies();
+            optionsBuilder.UseSqlite("Data Source=textTabs.db");
         }
     }
 }
