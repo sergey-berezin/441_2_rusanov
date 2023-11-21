@@ -35,7 +35,7 @@ namespace BertViewModel
         public ICommand RemoveTabCommand { get; private set; }
         public ICommand ClearAllCommand { get; private set; }
 
-        public ObservableCollection<TextTab> tabsFromDb { get; set; }
+        private ObservableCollection<TextTab> tabsFromDb { get; set; }
 
         public MainViewModel(IErrorSender errorSender, IFileDialog fileDialog)
         {
