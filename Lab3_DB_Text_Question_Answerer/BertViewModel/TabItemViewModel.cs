@@ -120,10 +120,35 @@ namespace BertViewModel
         {
             try
             {
-                var questionsFromDb = Database.QuestionsAndAnswers.Where(q => q.Question == question);
-                if (questionsFromDb.Any())
+                var textTab = Database.TextTabs.Where(tab => tab.Id == DbTabId).First();
+                var textEntity = textTab.TextEntity;
+                if (textEntity == null || textEntity.Text != text)
                 {
-                    Answer = questionsFromDb.First().Answer;
+                    var foundTextEntities = Database.TextEntities.Where(t => t.Text == text);
+                    if (foundTextEntities.Any())
+                    {
+                        textEntity = foundTextEntities.First();
+                        textTab.TextEntity = textEntity;
+                        textTab.Text = text;
+                        textTab.LatestQuestion = question;
+                        Database.TextTabs.Update(textTab);
+                        Database.SaveChanges();
+                    }
+                    else
+                    {
+                        textEntity = new TextEntity { Text = text };
+                        textTab.TextEntity = textEntity;
+                        textTab.Text = text;
+                        textTab.LatestQuestion = question;
+                        Database.TextEntities.Add(textEntity);
+                        Database.SaveChanges();
+                    }
+                }
+                var questionFromDb = textEntity.QuestionAndAnswer.Where(q => q.Question == question);
+                if (questionFromDb.Any())
+                {
+                    textTab.LatestAnswer = Answer;
+                    Answer = questionFromDb.First().Answer;
                 }
                 else
                 {
@@ -131,7 +156,8 @@ namespace BertViewModel
                     Answer = answer;
                     if (!token.IsCancellationRequested)
                     {
-                        Database.QuestionsAndAnswers.Add(new QuestionAndAnswer { Question = question, Answer = Answer, TextTabId = DbTabId });
+                        textTab.LatestAnswer = Answer;
+                        Database.QuestionsAndAnswers.Add(new QuestionAndAnswer { Question = question, Answer = Answer, TextEntity = textEntity });
                         Database.SaveChanges();
                     }
                 }

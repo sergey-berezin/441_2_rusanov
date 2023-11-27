@@ -35,12 +35,6 @@ namespace UI_Text_Question_Answerer
             DataContext = mainViewModel;
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            base.OnClosing(e);
-            mainViewModel.SaveDataToDb();
-        }
-
         public class MessageBoxErrorSender : IErrorSender
         {
             public void SendError(string message) => MessageBox.Show(message);

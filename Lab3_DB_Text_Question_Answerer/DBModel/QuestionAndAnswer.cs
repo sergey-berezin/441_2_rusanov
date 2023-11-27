@@ -11,7 +11,7 @@ namespace DBModel
         public int Id { get; set; }
         public string Question { get; set; }
         public string Answer { get; set; }
-        public int TextTabId { get; set; }
-        public virtual TextTab TextTab { get; set; }
+        public int TextEntityId { get; set; }
+        public TextEntity? TextEntity { get; set; }
     }
 }

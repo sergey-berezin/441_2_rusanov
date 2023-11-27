@@ -35,8 +35,6 @@ namespace BertViewModel
         public ICommand RemoveTabCommand { get; private set; }
         public ICommand ClearAllCommand { get; private set; }
 
-        private ObservableCollection<TextTab> tabsFromDb { get; set; }
-
         public MainViewModel(IErrorSender errorSender, IFileDialog fileDialog)
         {
             this.fileDialog = fileDialog;
@@ -64,9 +62,7 @@ namespace BertViewModel
         public void LoadfromDB()
         {
             database.Database.EnsureCreated();
-            database.TextTabs.Load();
-            tabsFromDb = database.TextTabs.Local.ToObservableCollection();
-            foreach (var tabDb in tabsFromDb)
+            foreach (var tabDb in database.TextTabs.ToList())
             {
                 String tabName = string.Format("Tab {0}", tabDb.Id);
                 TabItems.Add(new TabItemViewModel(tabName, bertModel, errorSender, fileDialog, database, tabDb.Id, tabDb.Text, tabDb.LatestQuestion, tabDb.LatestAnswer));
@@ -98,7 +94,7 @@ namespace BertViewModel
             try
             {
                 TabItemViewModel tabItem = sender as TabItemViewModel;
-                var tabDb = tabsFromDb.Where(t => t.Id == tabItem.DbTabId).First();
+                var tabDb = database.TextTabs.ToList().Where(t => t.Id == tabItem.DbTabId).First();
                 database.TextTabs.Remove(tabDb);
                 database.SaveChanges();
 
@@ -131,29 +127,10 @@ namespace BertViewModel
 
         private void clearDatabase()
         {
+
+            database.ChangeTracker.Clear();
             database.Database.EnsureDeleted();
             database.Database.EnsureCreated();
-        }
-
-        public void SaveDataToDb()
-        {
-            try
-            {
-                foreach (var tabItem in TabItems)
-                {
-                    var tabDb = tabsFromDb.Where(t => t.Id == tabItem.DbTabId).First();
-                    tabDb.Text = tabItem.TextFromFile;
-                    tabDb.LatestQuestion = tabItem.Question;
-                    tabDb.LatestAnswer = tabItem.Answer;
-                    database.TextTabs.Update(tabDb);
-                    database.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                errorSender.SendError("Ошибка:" + ex.Message);
-            }
-
         }
 
     }
