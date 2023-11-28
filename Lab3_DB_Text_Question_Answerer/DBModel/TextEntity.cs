@@ -10,6 +10,5 @@ namespace DBModel
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public List<QuestionAndAnswer> QuestionAndAnswer { get; set; } = new List<QuestionAndAnswer>();
     }
 }
