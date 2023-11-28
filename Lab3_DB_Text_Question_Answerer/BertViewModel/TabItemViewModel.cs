@@ -149,6 +149,7 @@ namespace BertViewModel
                 {
                     textTab.LatestAnswer = Answer;
                     Answer = questionFromDb.First().Answer;
+                    Database.SaveChanges();
                 }
                 else
                 {
