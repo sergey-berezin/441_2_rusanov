@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Text, Questions and Answers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Load text and get answers to your questions</h1>
+
+    <input type="file" id="fileInput" />
+    <br><br>
+    <textarea id="textInput" rows="25" cols="100" placeholder="Enter text..."></textarea>
+    <br><br>
+    <div id="questionsContainer"></div>
+    <button onclick="addQuestion()">ADD QUESTION</button>
+    <br><br>
+        <button onclick="submitQuestions()">GET ALL ANSWERS!</button>
+    <span id="loadingIndicator" style="display: none;">Loading...</span>
+
+    <script>
+        var questionCounter = 0;
+        //Загрузка содержимого файла
+        document.getElementById('fileInput').addEventListener('change', function () {
+            var file = this.files[0];
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var file = e.target.result;
+                var lines = file.split(/\r\n|\n/);
+                document.getElementById('textInput').value = lines.join('\n');;
+            }
+            reader.readAsText(file);
+        });
+
+        function addQuestion() {
+            console.log("ENTER FUNCTION")
+            questionCounter++;
+            var questionDiv = document.createElement('div');
+            questionDiv.classList.add('questionDiv');
+
+            var questionLabel = document.createElement('label');
+            questionLabel.innerHTML = 'Question ' + questionCounter + ': ';
+
+            var questionInput = document.createElement('input');
+            questionInput.classList.add('questionInput');
+            questionInput.type = 'text';
+            questionInput.name = 'question' + questionCounter;
+            questionInput.placeholder = 'Enter a question...';
+
+            questionDiv.appendChild(questionLabel);
+            questionDiv.appendChild(questionInput);
+
+            var answerLabel = document.createElement('label');
+            answerLabel.innerHTML = 'Answer ' + questionCounter + ': ';
+
+            var answerInput = document.createElement('input');
+            answerInput.classList.add('answerInput');
+            answerInput.type = 'text';
+            answerInput.name = 'answer' + questionCounter;
+            answerInput.placeholder = '...';
+            answerInput.setAttribute('readonly', true);
+
+            questionDiv.appendChild(answerLabel);
+            questionDiv.appendChild(answerInput);
+
+            document.getElementById('questionsContainer').appendChild(questionDiv);
+        }
+
+        /*function submitQuestions() {
+            // Get text from the text input
+            var text = document.getElementById('textInput').value;
+            // Get all question inputs
+            var questionInputs = document.querySelectorAll('#questions input');
+            var questions = ;
+            // Iterate through question inputs and store their values in the questions array
+            questionInputs.forEach(function (input) {
+                questions.push(input.value);
+            });
+
+            // Create a request body with the text and questions
+            var requestBody = {
+                text: text,
+                questions: questions
+            };
+
+            // Create a new XMLHttpRequest object
+            var xhr = new XMLHttpRequest();
+            // Open a POST request to the server's API endpoint
+            xhr.open('POST', '/api/answer', true);
+            // Set the request header to specify the request content type
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            // Define the onload function to handle server response
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // If the request is successful, parse the JSON response
+                    var response = JSON.parse(xhr.responseText);
+                    var answers = response.answers;
+
+                    var questionsDiv = document.getElementById('questions');
+                    for (var i = 0; i < questions.length; i++) {
+                        var question = questionsi;
+                        var answer = answersi;
+
+                        var questionResult = document.createElement('div');
+                        questionResult.innerHTML = '<strong>' + question + '</strong>: ' + answer;
+                        questionsDiv.appendChild(questionResult);
+                    }
+                }
+                document.getElementById('loadingIndicator').style.display = 'none';
+            };
+
+            // Define the onerror function to handle request errors
+            xhr.onerror = function () {
+                // Handle error
+            };
+
+            // Show the loading indicator
+            document.getElementById('loadingIndicator').style.display = 'block';
+            // Send the request with the JSON request body
+            xhr.send(JSON.stringify(requestBody));
+        }*/
+    </script>
+</body>
+</html>
