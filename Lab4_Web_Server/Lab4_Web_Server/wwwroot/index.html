@@ -93,12 +93,13 @@
                 questionsAndAnswerIds: questionsAndAnswerIds
             };
 
-            var jsonRequestBody = JSON.stringify(requestBody)
+            var jsonRequestBody = JSON.stringify(requestBody);
+            console.log(jsonRequestBody);
             try {
                 let response = await fetch('https://localhost:7023/api/textQuestionAnswerer', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json;charset=utf-8',
                     },
                     body: jsonRequestBody
                 })

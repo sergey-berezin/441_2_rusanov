@@ -5,7 +5,9 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab4_Web_Server", "Lab4_Web_Server\Lab4_Web_Server.csproj", "{1893E89F-48BF-4384-80F8-9F4AE7B7B2B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BertModelLibrary", "BertModelLibrary\BertModelLibrary.csproj", "{5E1C212D-9CE8-4A6C-A63B-0CFA94A0F51B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BertModelLibrary", "BertModelLibrary\BertModelLibrary.csproj", "{5E1C212D-9CE8-4A6C-A63B-0CFA94A0F51B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServerTest", "WebServerTest\WebServerTest.csproj", "{7189D080-B5AB-47FD-A0A3-76D44F9E8A2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{5E1C212D-9CE8-4A6C-A63B-0CFA94A0F51B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E1C212D-9CE8-4A6C-A63B-0CFA94A0F51B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E1C212D-9CE8-4A6C-A63B-0CFA94A0F51B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7189D080-B5AB-47FD-A0A3-76D44F9E8A2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7189D080-B5AB-47FD-A0A3-76D44F9E8A2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7189D080-B5AB-47FD-A0A3-76D44F9E8A2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7189D080-B5AB-47FD-A0A3-76D44F9E8A2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
