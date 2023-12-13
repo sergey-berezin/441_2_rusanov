@@ -144,7 +144,7 @@ namespace BertViewModel
                         Database.SaveChanges();
                     }
                 }
-                var questionFromDb = Database.QuestionsAndAnswers.Where(q => q .TextEntityId == textEntity.Id && q.Question == question);
+                var questionFromDb = Database.QuestionsAndAnswers.Where(q => q.TextEntityId == textEntity.Id && q.Question == question);
                 if (questionFromDb.Any())
                 {
                     textTab.LatestAnswer = Answer;
