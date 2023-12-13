@@ -33,7 +33,6 @@ namespace Lab4_Web_Server
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-                //return new AnswerResponse(answerId, ex.Message);
             }
         }
     }

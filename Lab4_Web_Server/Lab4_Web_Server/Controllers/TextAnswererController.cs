@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using System.Text.Json.Nodes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Lab4_Web_Server.Controllers
 {
     [Route("api/textQuestionAnswerer")]
@@ -14,7 +15,7 @@ namespace Lab4_Web_Server.Controllers
         private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
         private CancellationToken token;
 
-        public TextAnswererController(BertModelService bertModelService) 
+        public TextAnswererController(BertModelService bertModelService)
         {
             this.bertModelService = bertModelService;
             token = cancelTokenSource.Token;
@@ -36,7 +37,7 @@ namespace Lab4_Web_Server.Controllers
                     string question = item.question;
                     string answerId = item.answerId;
                     if (question == "")
-                       return BadRequest("Empty text!");
+                        return BadRequest("Empty question!");
                     if (question == "cancel") { cancelTokenSource.Cancel(); }
                     Tasks.Add(bertModelService.ProcessQuestionAsync(text, question, answerId, token));
                 }
@@ -48,7 +49,7 @@ namespace Lab4_Web_Server.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            
+
         }
         public record class TextAndQuestionsRequest(string text, List<QuestionAndAnswerId> questionsAndAnswerIds);
         public record class QuestionAndAnswerId(string question, string answerId);
