@@ -2,7 +2,7 @@
   "profiles": {
     "Lab1_Text_Question_Answerer": {
       "commandName": "Project",
-      "commandLineArgs": "..\\..\\..\\..\\hobbit.txt"
+      "commandLineArgs": "..\\\\..\\\\..\\\\..\\\\hobbit.txt"
     }
   }
 }

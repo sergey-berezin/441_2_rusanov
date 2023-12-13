@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace BertModelLibrary
@@ -15,20 +16,21 @@ namespace BertModelLibrary
     {
         private InferenceSession session;
         static Semaphore sessionSemaphore = new Semaphore(1, 1);
-        static public Queue<string> progressBar = new Queue<string>();
+        static bool isDownloaded = false;
+        static string modelWebSource = "";
 
-        private BertModel(InferenceSession inferenceSession)
+        public BertModel(string webSource)
         {
-            this.session = inferenceSession;
+            modelWebSource = webSource;
         }
 
-        public static async Task<BertModel> Create(string modelWebSource)
+        public async Task Create()
         {
             try
             {
                 String path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-                var modelPath = Path.Combine(path, "bert-large-uncased-whole-word-masking-finetuned-squad.onnx11");
+                var modelPath = Path.Combine(path, "bert-large-uncased-whole-word-masking-finetuned-squad.onnx");
 
                 string downaloadedModelPath = modelPath;
 
@@ -36,7 +38,11 @@ namespace BertModelLibrary
                 {
                     downaloadedModelPath = await DownloadModel(modelPath, modelWebSource);
                 }
-                return new BertModel(new InferenceSession(downaloadedModelPath));
+                else
+                {
+                    isDownloaded = true;
+                }
+                this.session = new InferenceSession(downaloadedModelPath);
             }
             catch
             {
@@ -49,29 +55,21 @@ namespace BertModelLibrary
         {
             try
             {
+
                 var httpClient = new HttpClient();
                 int retriesRemain = 5;
-                bool isDownloaded = false;
                 while (retriesRemain > 0 && !isDownloaded)
                 {
                     try
                     {
                         using var stream = await httpClient.GetStreamAsync(modelWebSource);
                         using var fileStream = new FileStream(modelPath, FileMode.CreateNew);
-                        lock (progressBar)
-                        {
-                            progressBar.Enqueue("Downloading model...");
-                        }
                         await stream.CopyToAsync(fileStream);
                         isDownloaded = true;
                     }
                     catch (Exception)
                     {
                         retriesRemain--;
-                        lock (progressBar)
-                        {
-                            progressBar.Enqueue($"Remains {retriesRemain} attempts to download model!");
-                        }
                         await Task.Delay(1000);
                     }
 
@@ -96,6 +94,8 @@ namespace BertModelLibrary
                 {
                     try
                     {
+                        if (!isDownloaded)
+                            throw new Exception("Model is not downloaded!");
                         if (token.IsCancellationRequested)
                             token.ThrowIfCancellationRequested();
 
@@ -158,8 +158,12 @@ namespace BertModelLibrary
                                     .ToList();
 
                         // Print the result.
+                        Task.Delay(5000).Wait();
 
-                        Task.Delay(3000).Wait();
+                        if (token.IsCancellationRequested)
+                            token.ThrowIfCancellationRequested();
+
+                        Task.Delay(5000).Wait();
 
                         if (token.IsCancellationRequested)
                             token.ThrowIfCancellationRequested();
@@ -175,7 +179,7 @@ namespace BertModelLibrary
 
                 }, token, TaskCreationOptions.LongRunning);
 
-                
+
                 return allComputations;
             }
             catch (Exception)
@@ -210,3 +214,4 @@ namespace BertModelLibrary
         public long[] TypeIds { get; set; }
     }
 }
+
